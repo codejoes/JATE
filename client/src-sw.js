@@ -1,6 +1,6 @@
-const { warmStrategyCache } = require("workbox-recipes");
+const { offlineFallback, warmStrategyCache } = require("workbox-recipes");
 const { CacheFirst } = require("workbox-strategies");
-const { registerRoute, setCatchHandler } = require("workbox-routing");
+const { registerRoute } = require("workbox-routing");
 const { CacheableResponsePlugin } = require("workbox-cacheable-response");
 const { ExpirationPlugin } = require("workbox-expiration");
 const { precacheAndRoute } = require("workbox-precaching/precacheAndRoute");
@@ -27,20 +27,14 @@ warmStrategyCache({
 registerRoute(({ request }) => request.mode === "navigate", pageCache);
 
 // TODO: Implement asset caching
-self.addEventListener("install", (event) => {
-  const files = ["/offline.html"];
-  event.waitUntil(
-    self.caches.open("offline-fallbacks").then((cache) => cache.addAll(files))
-  );
-});
-
-setCatchHandler(async (options) => {
-  const destination = options.request.destination;
-  const cache = await self.caches.open("offline-fallbacks");
-  if (destination === "document") {
-    return (await cache.match("/offline.html")) || Response.error();
-  }
-  return Response.error();
-});
-
-registerRoute();
+registerRoute(
+  ({ request }) => ["style", "script", "worker"].includes(request.destination),
+  new StaleWhileRevalidate({
+    cacheName: "asset-cache",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+    ],
+  })
+);
