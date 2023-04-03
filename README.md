@@ -26,7 +26,7 @@ Simply clone or fork the git repository and run it locally. Make sure to install
 
 ## Usage
 
-Follow the steps above or visit [this Heroku link](https://git.heroku.com/quiet-brushlands-79166.git).
+Follow the steps above or visit [this Heroku link](https://quiet-brushlands-79166.herokuapp.com/).
 
 ## License
 
