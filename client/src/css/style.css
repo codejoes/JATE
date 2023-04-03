@@ -1,4 +1,6 @@
 /* app shell CSS */
+@import 'codemirror/lib/codemirror.css';
+
 :root {
   --primary: #31a9e1;
   --gray: #ececec;
